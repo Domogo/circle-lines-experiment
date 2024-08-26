@@ -4,9 +4,10 @@ let centerX, centerY;
 let barHeights = [];
 let waveOffset = 0;
 let lastWaveTime = 0;
-let waveSpeed = 1; // Increased for faster movement
+let waveSpeed = 2; // Adjusted for one full rotation in about 1 second
 let waveAmplitude = 30; // Increased for more noticeable effect
-let waveWidth = 20; // Controls the width of the affected area
+let waveWidth = 30; // Controls the width of the affected area
+let isWaveActive = false;
 
 function setup() {
   let canvas = createCanvas(800, 800);
@@ -25,12 +26,22 @@ function setup() {
 function draw() {
   background(255);
 
-  // Update wave offset
   let currentTime = millis();
-  waveOffset += waveSpeed;
-  if (waveOffset >= 360) {
+
+  // Check if it's time to start a new wave
+  if (currentTime - lastWaveTime > 10000 && !isWaveActive) {
+    isWaveActive = true;
     waveOffset = 0;
     lastWaveTime = currentTime;
+  }
+
+  // Update wave offset if active
+  if (isWaveActive) {
+    waveOffset += waveSpeed;
+    if (waveOffset >= 360) {
+      isWaveActive = false;
+      waveOffset = 0;
+    }
   }
 
   // Draw inner pink bars and outer grey lines with localized wave effect
@@ -39,7 +50,7 @@ function draw() {
     let angleDiff = (angle - waveOffset + 360) % 360;
     let waveEffect = 0;
 
-    if (angleDiff < waveWidth) {
+    if (isWaveActive && angleDiff < waveWidth) {
       let normalizedAngle = map(angleDiff, 0, waveWidth, 0, 180);
       waveEffect = sin(normalizedAngle) * waveAmplitude;
     }
