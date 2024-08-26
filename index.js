@@ -1,12 +1,12 @@
 let numLines = 180;
 let radius;
-let centerX, centerY;
+let center;
 let barHeights = [];
 let waveOffset = 0;
 let lastWaveTime = 0;
-let waveSpeed = 1.5; // Adjusted for one full rotation in about 1 second
-let waveAmplitude = 60; // Increased for more noticeable effect
-let waveWidth = 45; // Controls the width of the affected area
+let waveSpeed = 4; // Adjusted for one full rotation in about 1 second
+let waveAmplitude = 40; // Increased for more noticeable effect
+let waveWidth = 50; // Controls the width of the affected area
 let isWaveActive = false;
 let lineSpreadFactor = 0.2; // Controls how much the lines spread apart
 let triggerEveryMs = 10000; // 10 seconds
@@ -16,8 +16,7 @@ function setup() {
   let canvas = createCanvas(800, 800);
   canvas.style("display", "block");
   radius = min(width, height) * 0.4;
-  centerX = width / 2;
-  centerY = height / 2;
+  center = width / 2;
   angleMode(DEGREES);
   arcRadius = radius * 0.3; // Set the radius for the inner arc
 
@@ -57,21 +56,19 @@ function draw() {
 
     if (isWaveActive && angleDiff < waveWidth) {
       let normalizedAngle = map(angleDiff, 0, waveWidth, 0, 180);
-      waveEffect = sin(normalizedAngle) * waveAmplitude * 0.5;
-      angleOffset = waveEffect * lineSpreadFactor;
+      waveEffect = sin(normalizedAngle) * waveAmplitude * 0.4;
+      angleOffset = lineSpreadFactor;
     }
 
     let adjustedAngle = angle + angleOffset;
 
     // Inner pink bars
-    let x1 = centerX + cos(adjustedAngle) * (arcRadius + waveEffect);
-    let y1 = centerY + sin(adjustedAngle) * (arcRadius + waveEffect);
+    let x1 = center + cos(adjustedAngle) * (arcRadius + waveEffect);
+    let y1 = center + sin(adjustedAngle) * (arcRadius + waveEffect);
     let x2 =
-      centerX +
-      cos(adjustedAngle) * (radius * 0.3 + barHeights[i] + waveEffect);
+      center + cos(adjustedAngle) * (radius * 0.3 + barHeights[i] + waveEffect);
     let y2 =
-      centerY +
-      sin(adjustedAngle) * (radius * 0.3 + barHeights[i] + waveEffect);
+      center + sin(adjustedAngle) * (radius * 0.3 + barHeights[i] + waveEffect);
     strokeWeight(3);
     stroke(255, 20, 100);
     line(x1, y1, x2, y2);
@@ -79,13 +76,13 @@ function draw() {
     // Outer grey lines
     stroke(200);
     strokeWeight(1);
-    let x3 = centerX + cos(adjustedAngle) * (radius * 1.2 + waveEffect);
-    let y3 = centerY + sin(adjustedAngle) * (radius * 1.2 + waveEffect);
+    let x3 = center + cos(adjustedAngle) * (radius * 1.2 + waveEffect);
+    let y3 = center + sin(adjustedAngle) * (radius * 1.2 + waveEffect);
     line(x2, y2, x3, y3);
   }
 
   // Draw central white circle (slightly smaller to accommodate the arc)
   noStroke();
   fill(255);
-  circle(centerX, centerY, arcRadius * 1.8);
+  circle(center, center, arcRadius * 1.8);
 }
